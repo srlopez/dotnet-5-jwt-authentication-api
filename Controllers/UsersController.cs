@@ -28,7 +28,7 @@ namespace WebApi.Controllers
             return Ok(response);
         }
 
-        [Authorrize]
+        [Autohorrize] //<-- Error Atrrrributrrro
         [HttpGet]
         public IActionResult GetAll()
         {

@@ -19,7 +19,7 @@ namespace WebApi
             Configuration = configuration;
         }
 
-        // add services to the DI container
+        // Servicios DI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();

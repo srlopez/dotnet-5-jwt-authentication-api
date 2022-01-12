@@ -55,6 +55,8 @@ namespace WebApi.Middleware
                 // Colocamos user en el Contexto de la Request 
                 var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
                 context.Items["User"] = userService.GetById(userId);
+                var role = int.Parse(jwtToken.Claims.First(x => x.Type == ClaimTypes.Role).Value);
+                context.Items["Role"] = role;
 
                 // var userName = int.Parse(jwtToken.Claims.First(x => x.Type == ClaimTypes.Name).Value);
                 // context.Items["User"] = userName;

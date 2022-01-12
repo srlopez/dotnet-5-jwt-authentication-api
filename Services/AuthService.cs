@@ -24,8 +24,12 @@ namespace WebApi.Auth
         // users list
         private List<User> _users = new List<User>
         {
-            new User { Id = 1, FirstName = "Test", LastName = "User", Username = "test", Password = "test" },
-            new User { Id = 2, FirstName = "Santi", LastName = "Lopez", Username = "santi", Password = "1234" }
+            new User {  Id = 1, FirstName = "Test", LastName = "User", 
+                        Role = "User",
+                        Username = "test", Password = "test" },
+            new User {  Id = 2, FirstName = "Santi", LastName = "Lopez", 
+                        Role = "Admin",
+                        Username = "santi", Password = "1234" }
         };
 
         private readonly AppSettings _appSettings;
@@ -44,7 +48,7 @@ namespace WebApi.Auth
             // 2.- control db
 
 
-            // autenticacion valida -> generamos jwt
+            // autenticacion válida -> generamos jwt
             var (token, validTo) = generateJwtToken(user);
 
             // Devolvemos lo que nos interese
@@ -73,7 +77,7 @@ namespace WebApi.Auth
         // internos
         private (string token, DateTime validTo) generateJwtToken(User user)
         {
-            // generate token that is valid for 7 days
+            // generamos un token válido para 7 días
             var dias = 7;
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -82,7 +86,8 @@ namespace WebApi.Auth
                 Subject = new ClaimsIdentity(new[] 
                 { 
                     new Claim("id", user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Username)
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role),
                 }),
                 Expires = DateTime.UtcNow.AddDays(dias),
                 SigningCredentials = new SigningCredentials(
