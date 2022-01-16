@@ -25,17 +25,16 @@ namespace WebApi.Middleware
 
         public async Task Invoke(HttpContext context, IAuthService userService)
         {
-            var bearer = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").First();
-            if(bearer != "Bearer"){
-                await _next(context);
-                return;
-            }
-            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-
-            if (token != null)
-                attachUserToContext(context, userService, token);
-
+            // ====> Request ===>
+            string[] authoData = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ");
+            if (authoData != null && authoData.Length == 2)
+                if (authoData[0] == "Bearer")
+                    attachUserToContext(context, userService, authoData[1]);
+            // ===
             await _next(context);
+            // ===
+            // <=== Response <===
+            
         }
 
         private void attachUserToContext(HttpContext context, IAuthService userService, string token)

@@ -16,7 +16,7 @@ public class AutohorrizeAttribute : Attribute, IAuthorizationFilter
             // no logeado
             context.Result = new JsonResult(
                 new { 
-                    message = "Unauthorized" 
+                    message = "Unauthorrorized" 
                 }) 
                 { 
                     StatusCode = StatusCodes.Status401Unauthorized 
