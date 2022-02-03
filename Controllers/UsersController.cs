@@ -9,26 +9,14 @@ namespace WebApi.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private IAuthService _userService;
+        private IUsersService _userService;
 
-        public UsersController(IAuthService userService)
+        public UsersController(IUsersService userService)
         {
             _userService = userService;
         }
 
-        [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate(AuthRequest model)
-        {
-            var response = _userService.Authenticate(model);
-
-            if (response == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
-
-            return Ok(response);
-        }
-
-        [Autohorrize] //<-- Error Atrrrributrrro
+        [Authorize] //<-- Atributo en Herramientas
         [HttpGet]
         public IActionResult GetAll()
         {

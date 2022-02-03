@@ -6,8 +6,10 @@ using WebApi.Models;
 
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public class AutohorrizeAttribute : Attribute, IAuthorizationFilter
+public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 {
+    // Atributo utilizado el cada metodo que necesite ser
+    // validado con el JWT
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         var user = (User)context.HttpContext.Items["User"];
@@ -16,7 +18,7 @@ public class AutohorrizeAttribute : Attribute, IAuthorizationFilter
             // no logeado
             context.Result = new JsonResult(
                 new { 
-                    message = "Unauthorrorized" 
+                    message = "Unauthorized" 
                 }) 
                 { 
                     StatusCode = StatusCodes.Status401Unauthorized 

@@ -23,9 +23,10 @@ namespace WebApi.Middleware
             _appSettings = appSettings.Value;
         }
 
-        public async Task Invoke(HttpContext context, IAuthService userService)
+        public async Task Invoke(HttpContext context, IUsersService userService)
         {
             // ====> Request ===>
+            // Modificamos el contexto de la Request
             string[] authoData = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ");
             if (authoData != null && authoData.Length == 2)
                 if (authoData[0] == "Bearer")
@@ -34,10 +35,12 @@ namespace WebApi.Middleware
             await _next(context);
             // ===
             // <=== Response <===
+            // Modificamos el contexto de la Response
+
             
         }
 
-        private void attachUserToContext(HttpContext context, IAuthService userService, string token)
+        private void attachUserToContext(HttpContext context, IUsersService userService, string token)
         {
             try
             {

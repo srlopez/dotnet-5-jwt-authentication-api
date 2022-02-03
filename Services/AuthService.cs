@@ -15,8 +15,6 @@ namespace WebApi.Auth
     public interface IAuthService
     {
         AuthResponse Authenticate(AuthRequest model);
-        IEnumerable<User> GetAll();
-        User GetById(int id);
     }
 
     public class AuthService : IAuthService
@@ -47,9 +45,10 @@ namespace WebApi.Auth
             if (user == null) return null;
             // 2.- control db
 
-
             // autenticacion válida -> generamos jwt
-            var (token, validTo) = generateJwtToken(user);
+            // generamos un token válido para 7 días
+            var fExpiracion = DateTime.UtcNow.AddDays(7);
+            var token = generateJwtToken(user, fExpiracion);
 
             // Devolvemos lo que nos interese
             return new AuthResponse
@@ -59,26 +58,14 @@ namespace WebApi.Auth
                 LastName = user.LastName,
                 Username = user.Username,
                 Token = token,
-                ValidTo = validTo
+                ValidTo = fExpiracion
             };
 
         }
 
-        public IEnumerable<User> GetAll()
-        {
-            return _users;
-        }
-
-        public User GetById(int id)
-        {
-            return _users.FirstOrDefault(x => x.Id == id);
-        }
-
         // internos
-        private (string token, DateTime validTo) generateJwtToken(User user)
+        private string generateJwtToken(User user, DateTime expiracion)
         {
-            // generamos un token válido para 7 días
-            var dias = 7;
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -89,13 +76,13 @@ namespace WebApi.Auth
                     new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.Role, user.Role),
                 }),
-                Expires = DateTime.UtcNow.AddDays(dias),
+                Expires = expiracion,
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key), 
                     SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return (token: tokenHandler.WriteToken(token), validTo: token.ValidTo);
+            return  tokenHandler.WriteToken(token);
         }
     }
 }
